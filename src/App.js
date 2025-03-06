@@ -25,7 +25,7 @@ import { useRef, useEffect, useState } from "react";
 
 export default function Toggle() {
   const [enabled, setEnabled] = useState(false);
-
+  const [isWiggling, setIsWiggling] = useState(false);
   const previousStateRef = useRef(enabled);
   const toggleCountRef = useRef(0);
   const switchRef = useRef(null);
@@ -38,24 +38,16 @@ export default function Toggle() {
   }, []);
 
   const handleToggle = () => {
-    // Update previous state before changing
     previousStateRef.current = enabled;
-
-    // Update state
     setEnabled(!enabled);
-
-    // Increment toggle count
     toggleCountRef.current += 1;
-
-    // Save to localStorage
     localStorage.setItem("toggleState", JSON.stringify(!enabled));
 
-    // Log changes
-    console.log("Previous state:", previousStateRef.current);
-    console.log("New state:", !enabled);
-    console.log("Toggle count:", toggleCountRef.current);
+    // Trigger wiggle animation
+    setIsWiggling(true);
+    setTimeout(() => setIsWiggling(false), 300);
 
-    // Apply scale animation
+    // Scale animation
     if (switchRef.current) {
       switchRef.current.style.transform = "scale(1.1)";
       setTimeout(() => {
@@ -74,22 +66,39 @@ export default function Toggle() {
           onChange={handleToggle}
           ref={switchRef}
           className={classNames(
-            enabled ? "bg-indigo-600" : "bg-gray-200",
-            "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+            enabled ? "w-16" : "w-11",
+            enabled
+              ? "bg-gradient-to-r from-indigo-500 to-purple-500 backdrop-blur-md backdrop-filter"
+              : "bg-gray-200",
+            isWiggling && "animate-wiggle",
+            "relative inline-flex h-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           )}
-          style={{ transition: "transform 0.2s ease-in-out" }}
         >
           <span
             aria-hidden="true"
             className={classNames(
-              enabled ? "translate-x-5" : "translate-x-0",
-              "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+              enabled ? "translate-x-9" : "translate-x-0",
+              "pointer-events-none", // ✅ Tıklamaların engellenmesini sağlar
+              "inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
             )}
-          />
+          >
+            {enabled ? "🌞" : "🌙"}
+          </span>
         </Switch>
         <Switch.Label as="span" className="ml-3 text-sm">
           <span className="font-medium text-gray-900">Yıllık fatura</span>{" "}
           <span className="text-gray-500">(%10 Tasarruf Edin)</span>
+          <span
+            className={classNames(
+              "transform transition-all duration-300",
+              enabled ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"
+            )}
+          >
+            <span className="text-indigo-500 font-medium">
+              {" "}
+              - Premium aktif
+            </span>
+          </span>
         </Switch.Label>
       </Switch.Group>
     </div>
