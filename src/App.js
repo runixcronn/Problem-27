@@ -56,6 +56,9 @@ export default function Toggle() {
         }
       }, 200);
     }
+    console.log("Previous state:", previousStateRef.current);
+    console.log("Current state:", enabled);
+    console.log("Toggle count:", toggleCountRef.current);
   };
 
   return (
@@ -78,7 +81,7 @@ export default function Toggle() {
             aria-hidden="true"
             className={classNames(
               enabled ? "translate-x-9" : "translate-x-0",
-              "pointer-events-none", // ✅ Tıklamaların engellenmesini sağlar
+              "pointer-events-none",
               "inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
             )}
           >
