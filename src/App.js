@@ -43,11 +43,9 @@ export default function Toggle() {
     toggleCountRef.current += 1;
     localStorage.setItem("toggleState", JSON.stringify(!enabled));
 
-    // Trigger wiggle animation
     setIsWiggling(true);
     setTimeout(() => setIsWiggling(false), 300);
 
-    // Scale animation
     if (switchRef.current) {
       switchRef.current.style.transform = "scale(1.1)";
       setTimeout(() => {
